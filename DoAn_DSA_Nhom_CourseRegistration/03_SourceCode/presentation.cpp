@@ -37,6 +37,7 @@ void man_hinh_tim_sinh_vien() {
         cout << "[Ket qua] MSSV: " << sv->mssv << "\n";
         cout << "          Ho va ten: " << sv->ho_ten << "\n";
         cout << "          Khoa/Nganh: " << sv->ma_nganh << "\n";
+        cout << "          Ngay sinh: " << sv->ngay_sinh << "\n"; // In them ngay sinh
     } else {
         cout << "[Loi] Khong tim thay sinh vien co MSSV: " << ma_sv << "\n";
     }

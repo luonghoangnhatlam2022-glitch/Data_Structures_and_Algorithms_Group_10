@@ -13,8 +13,8 @@ using namespace std;
 // TANG PERSISTENCE: DOC DU LIEU TU FILE CSV NAP VAO RAM
 // ========================================================
 
-// 1. Doc file danh sach sinh vien (students.csv)
-// Dinh dang mong doi: mssv,ho_ten,ma_nganh
+// 1. Doc file danh sach sinh vien (Sinh_Vien.csv)
+// Dinh dang mong doi: mssv,ho_ten,ma_nganh,ngay_sinh
 bool nap_du_lieu_sinh_vien(string duong_dan_file) {
     ifstream tep_tin(duong_dan_file);
     if (!tep_tin.is_open()) {
@@ -31,22 +31,24 @@ bool nap_du_lieu_sinh_vien(string duong_dan_file) {
         if (dong_du_lieu.empty()) continue;
 
         stringstream tach_chuoi(dong_du_lieu);
-        string ma_sv, ten_sv, nganh;
+        string ma_sv, ten_sv, nganh, ns;
 
-        // Tach cac cot duoc phan cach bang dau phay
+        // Tach 4 cot duoc phan cach bang dau phay
         if (getline(tach_chuoi, ma_sv, ',') &&
             getline(tach_chuoi, ten_sv, ',') &&
-            getline(tach_chuoi, nganh, ',')) {
+            getline(tach_chuoi, nganh, ',') &&
+            getline(tach_chuoi, ns, ',')) {
 
             SinhVien sv;
             sv.mssv = ma_sv;
             sv.ho_ten = ten_sv;
             sv.ma_nganh = nganh;
+            sv.ngay_sinh = ns;
 
             // Nap truc tiep vao bang bam O(1) tren RAM
             ds_sinh_vien[ma_sv] = sv;
             dem++;
-        }
+            }
     }
 
     tep_tin.close();

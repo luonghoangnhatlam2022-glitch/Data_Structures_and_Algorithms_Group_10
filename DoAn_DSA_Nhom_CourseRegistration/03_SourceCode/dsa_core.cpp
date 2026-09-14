@@ -20,6 +20,7 @@ using ll = long long;
 struct SinhVien {
     string mssv;
     string ho_ten;
+    string ngay_sinh;
     string ma_nganh;
 };
 

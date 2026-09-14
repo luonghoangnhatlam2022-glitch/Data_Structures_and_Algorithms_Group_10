@@ -1,11 +1,6 @@
-﻿mssv,ho_ten,ma_nganh
-25110391,Vo Hoang Tu,CNTT
-25110190,Tran Anh Hao,CNTT
-25110348,Nguyen Thuy Trang,CNTT
-25110307,Le Van Cuong,CNTT
-25110254,Pham Minh Khoa,CNTT
-25110128,Doan Kien An,CNTT
-25110129,Nguyen Ha An,KTPM
-25110139,Tran Tuan Anh,KTPM
-25110140,Truong Tuan Anh,HTTT
-25110143,Duong Thai Bao,KHMT
+﻿mssv,ho_ten,ma_nganh,ngay_sinh
+25110391,Vo Hoang Tu,CNTT,24/12/2007
+25110190,Tran Anh Hao,CNTT,04/09/2007
+25110348,Nguyen Thuy Trang,CNTT,15/03/2007
+25110307,Le Van Cuong,CNTT,10/08/2007
+25110254,Pham Minh Khoa,CNTT,05/11/2007
