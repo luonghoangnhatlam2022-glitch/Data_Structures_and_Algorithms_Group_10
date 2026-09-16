@@ -6,28 +6,33 @@
 
 using namespace std;
 
-vector<int> m = {19, 7, 24, 8, 13, 26, 22, 9, 14, 17, 28, 3};
+long long seed = 1111;
 
-void Ngay_Thang(vector<pair<int, int>> &a, int n)
+long long random(int x)
 {
-    int seedn = 0, seedt = 0, mn = 0, mt = 0;
+    seed = (1103515245 * seed + 12345) % 2147483648;
+    return seed % x;
+}
+
+void Ngay_Thang(vector<pair<int, int>> &a, int x)
+{
     int i = 0;
-    while (i < n)
+    int n, t;
+    while (i < x)
     {
-        seedt = (seedt + m[mt]) * m[mt] % 12 + 1;
-        mt = (mt + 1) % 12;
+        t = random(12) + 1;
         while (true)
         {
-            seedn = (seedn + m[mn]) * m[mn] % 31 + 1;
-            mn = (mn + 1) % 12;
-            if (seedn <= 28)
+            n = random(31) + 1;
+            if (n <= 28)
                 break;
-            if (seedt == 1 || seedt == 3 || seedt == 5 || seedt == 7 || seedt == 8 || seedt == 10 || seedt == 12)
+            if (t == 1 || t == 3 || t == 5 || t == 7 || t == 8 || t == 10 || t == 12)
                 break;
-            if (seedt != 4 && seedn <= 30)
+            if (t != 4 && n <= 30)
                 break;
         }
-        a[i] = {seedn, seedt};
+        a.push_back({n, t});
+        i++;
     }
 }
 void Ho_Ten(vector<string> &s, int n)
@@ -69,28 +74,14 @@ void Ho_Ten(vector<string> &s, int n)
         i++;
     }
     file.close();
-    int j = 0;
-
-    int seedHo = 0;
-    int seedLot = 2;
-    int seedDoDai = 1;
-
-    auto update_seed = [&](int &seed, int x, int y = 0)
-    {
-        seed = ((seed + m[j]) * m[j]) % x + y;
-    };
 
     int soVongLap = n / 100;
     for (int i = 0; i < 100; ++i)
     {
         for (int k = 0; k < soVongLap; ++k)
         {
+            int dodai = random(3) + 2;
 
-            // 1. Cập nhật seed Độ dài và tính độ dài tên
-            // Truyền x = 10 (có thể điều chỉnh) để lấy biến thiên, sau đó mod 3 + 2
-            seedDoDai = ((seedDoDai - 2 + m[j]) * m[j]) % 3 + 2; // Sẽ ra 2, 3, hoặc 4
-
-            // 2. Lấy Tên (từ trên xuống theo i) và kiểm tra giới tính
             string ten = Ten[i].first;
             int gioi_tinh = Ten[i].second; // 0: nam nữ đều được, 1: nam, 2: nữ
 
@@ -100,45 +91,44 @@ void Ho_Ten(vector<string> &s, int n)
                 gioi_tinh = (i + k) % 2 + 1; // Đảm bảo luôn ra 1 (nam) hoặc 2 (nữ)
             }
 
-            // 3. Lấy Họ (x=10 vì mảng Ho có 10 phần tử)
-            update_seed(seedHo, 10, 0);
-            string ho1 = Ho[seedHo];
+            int ho = random(10);
+            string ho1 = Ho[ho];
             string ho2 = "";
 
             // Nếu độ dài = 4 thì chạy seed lấy thêm họ 2
-            if (seedDoDai == 4)
+            while (dodai == 4)
             {
-                j = (j + 1) % 12;
-                update_seed(seedHo, 10, 0);
-                ho2 = Ho[seedHo];
+                ho = random(10);
+                ho2 = Ho[ho];
+                if (ho2 != ho1)
+                    break;
             }
 
             // 4. Lấy Lót (Nếu độ dài >= 3)
             string lot = "";
-            if (seedDoDai >= 3)
+            if (dodai >= 3)
             {
                 do
                 {
-                    update_seed(seedLot, 10, 0); // x=10 vì mảng lót có 10 phần tử
-                    j = (j + 1) % 12;
+                    int tlot = random(10);
                     if (gioi_tinh == 1)
                     {
-                        lot = Lnam[seedLot];
+                        lot = Lnam[tlot];
                     }
                     else
                     {
-                        lot = Lnu[seedLot];
+                        lot = Lnu[tlot];
                     }
                 } while (lot == ten);
             }
 
             // 5. Nối chuỗi tạo tên hoàn chỉnh
             string full_name = ho1;
-            if (seedDoDai == 4)
+            if (dodai == 4)
             {
                 full_name += " " + ho2;
             }
-            if (seedDoDai >= 3)
+            if (dodai >= 3)
             {
                 full_name += " " + lot;
             }
@@ -146,20 +136,46 @@ void Ho_Ten(vector<string> &s, int n)
 
             // Push vào vector tổng
             s.push_back(full_name);
-            j = (j + 1) % 12;
         }
     }
+}
+string Nganh(vector<string> s, int x)
+{
+    x = random(4);
+    return s[x];
 }
 
 int main()
 {
     vector<string> name;
     vector<pair<int, int>> sinh;
+
     vector<string> nganh = {"CNTT", "ATTT", "KTDL", "AI"};
     int n = 200;
+
     Ho_Ten(name, n);
+    Ngay_Thang(sinh, n);
+
+    string filename = "Sinh_Vien.csv";
+
+    ofstream file(filename);
+
+    file << "mssv,ho_ten,ma_nganh,ngay_sinh\n";
+
+    int mssv = 25000;
+    // 4. Ghi từng dòng dữ liệu
     for (int i = 0; i < n; i++)
     {
-        cout << name[i] << endl;
+        file << ++mssv << ","
+             << name[i] << ","
+             << Nganh(nganh, 4) << ","
+             << sinh[i].first << "/" << sinh[i].second << "/2007\n";
     }
+
+    // 5. Đóng file
+    file.close();
+
+    cout << "Da ghi file CSV thanh cong: " << filename << endl;
+
+    return 0;
 }
