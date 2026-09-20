@@ -69,7 +69,7 @@ void dem_so_sinh_vien()
 
 void sinh_data(ll n)
 {
-    ofstream tep_tin("../02_Data/student_1k.csv");
+    ofstream tep_tin("../02_Data/students_1k.csv");
 
     ll dem = 0;
     string hp;
@@ -84,14 +84,11 @@ void sinh_data(ll n)
             hp = danh_sach_hoc_phan[random(so_luong_hoc_phan)];
             sv = 25001 + random(so_luong_sinh_vien);
 
-            if (danh_sach_sinh_vien[sv][hp] == true)
-            {
-                continue;
-            }
-            else
+            if (danh_sach_sinh_vien[sv][hp] == false)
             {
                 danh_sach_sinh_vien[sv][hp] = true;
                 tep_tin << "ADD," << hp << "," << sv << "\n";
+                dem++;
             }
         }
         else if (lenhso < 8) // EMOVE
@@ -99,20 +96,18 @@ void sinh_data(ll n)
             hp = danh_sach_hoc_phan[random(so_luong_hoc_phan)];
             sv = 25001 + random(so_luong_sinh_vien);
 
-            if (danh_sach_sinh_vien[sv][hp] == false)
-            {
-                continue;
-            }
-            else
+            if (danh_sach_sinh_vien[sv][hp] == true)
             {
                 danh_sach_sinh_vien[sv][hp] = false;
                 tep_tin << "REMOVE," << hp << "," << sv << "\n";
+                dem++;
             }
         }
         else if (lenhso == 8) // GETSV
         {
             sv = 25001 + random(so_luong_sinh_vien);
             tep_tin << "GETSV," << sv << "\n";
+            dem++;
         }
         else // GETHP
         {
