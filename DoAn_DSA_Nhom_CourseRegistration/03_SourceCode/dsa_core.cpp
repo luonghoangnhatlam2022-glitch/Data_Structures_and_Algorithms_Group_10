@@ -4,6 +4,7 @@
 #include <vector>
 #include <list>
 #include <unordered_map>
+#include <unordered_set>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
@@ -60,7 +61,8 @@ unordered_map<string, SinhVien> ds_sinh_vien;
 unordered_map<string, HocPhan> ds_hoc_phan;
 
 // Danh sach sinh vien hoc chinh thuc cua tung mon: ma_mon -> vector<mssv>
-unordered_map<string, vector<string>> ds_chinh_thuc;
+// Danh sach sinh vien hoc chinh thuc cua tung mon: ma_mon -> unordered_set<mssv>
+unordered_map<string, unordered_set<string>> ds_chinh_thuc;
 
 // MC2 & CR1: Danh sach cho cua tung mon: ma_mon -> DanhSachCho
 unordered_map<string, DanhSachCho> ds_cho;
@@ -123,10 +125,9 @@ string dang_ky_mon(string ma_mon, string mssv)
 
     // 2. Kiem tra da co trong lop chinh thuc chua
     auto &lop_chinh_thuc = ds_chinh_thuc[ma_mon];
-    for (const string &id : lop_chinh_thuc)
+    if (lop_chinh_thuc.find(mssv) != lop_chinh_thuc.end())
     {
-        if (id == mssv)
-            return "DA_DANG_KY_CHINH_THUC";
+        return "DA_DANG_KY_CHINH_THUC";
     }
 
     // 3. Kiem tra da nam trong danh sach cho chua
@@ -142,7 +143,7 @@ string dang_ky_mon(string ma_mon, string mssv)
     if (hp.si_so_hien_tai < hp.si_so_toi_da)
     {
         hp.si_so_hien_tai++;
-        lop_chinh_thuc.push_back(mssv);
+        lop_chinh_thuc.insert(mssv);
         ghi_nhat_ky("DANG_KY", mssv, ma_mon);
         return "THANH_CONG_CHINH_THUC";
     }
@@ -163,22 +164,11 @@ string huy_mon_chinh_thuc(string ma_mon, string mssv)
         return "LOI_MON_KHONG_TON_TAI";
 
     auto &lop_chinh_thuc = ds_chinh_thuc[ma_mon];
-    int vi_tri = -1;
-    for (int i = 0; i < (int)lop_chinh_thuc.size(); ++i)
-    {
-        if (lop_chinh_thuc[i] == mssv)
-        {
-            vi_tri = i;
-            break;
-        }
-    }
 
-    // Sinh vien khong co trong lop chinh thuc
-    if (vi_tri == -1)
+    // Xoa truc tiep qua Key O(1); ham erase tra ve so luong phan tu da xoa (0 hoac 1)
+    if (lop_chinh_thuc.erase(mssv) == 0)
         return "SINH_VIEN_KHONG_CO_TRONG_LOP";
 
-    // Xoa sinh vien khoi lop
-    lop_chinh_thuc.erase(lop_chinh_thuc.begin() + vi_tri);
     ghi_nhat_ky("HUY_MON", mssv, ma_mon);
 
     HocPhan &hp = ds_hoc_phan[ma_mon];
@@ -191,7 +181,7 @@ string huy_mon_chinh_thuc(string ma_mon, string mssv)
         hang_cho.hang_doi.pop_front();
         hang_cho.vi_tri_node.erase(mssv_duoc_chon);
 
-        lop_chinh_thuc.push_back(mssv_duoc_chon);
+        lop_chinh_thuc.insert(mssv_duoc_chon); // O(1)
         ghi_nhat_ky("DON_LEN_CHINH_THUC", mssv_duoc_chon, ma_mon);
         return "DA_HUY_VA_DON_SINH_VIEN_" + mssv_duoc_chon;
     }
