@@ -1,8 +1,7 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include <vector>
-#include <list>
+#include "list.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <chrono>
@@ -48,8 +47,8 @@ struct LichSu
 // Ket hop: std::list (hang doi FIFO) + std::unordered_map (dinh vi iterator O(1))
 struct DanhSachCho
 {
-    list<string> hang_doi;                                     // Thu tu sinh vien xep hang
-    unordered_map<string, list<string>::iterator> vi_tri_node; // mssv -> con tro trong list
+    list hang_doi;                                     // Thu tu sinh vien xep hang
+    unordered_map<string, Node*> vi_tri_node; // mssv -> con tro trong list
 };
 
 // ==========================================
@@ -95,7 +94,7 @@ void ghi_nhat_ky(string hanh_dong, string mssv, string ma_mon)
 // ==========================================
 
 // MC1: Tra cuu thong tin sinh vien theo MSSV - O(1)
-SinhVien *tim_sinh_vien(string mssv)
+SinhVien* tim_sinh_vien(string mssv)
 {
     if (ds_sinh_vien.find(mssv) != ds_sinh_vien.end())
     {
@@ -149,9 +148,7 @@ string dang_ky_mon(string ma_mon, string mssv)
     }
 
     // 5. Neu da het cho -> xep vao hang doi danh sach cho (FIFO)
-    hang_cho.hang_doi.push_back(mssv);
-    auto it = --hang_cho.hang_doi.end();
-    hang_cho.vi_tri_node[mssv] = it; // Luu iterator de xoa O(1) ve sau
+    hang_cho.vi_tri_node[mssv] = hang_cho.hang_doi.push_back(mssv);
     ghi_nhat_ky("VAO_HANG_CHO", mssv, ma_mon);
     return "THANH_CONG_VAO_HANG_CHO";
 }
@@ -198,14 +195,17 @@ bool rut_khoi_hang_cho(string ma_mon, string mssv)
     if (ds_hoc_phan.find(ma_mon) == ds_hoc_phan.end())
         return false;
 
-    auto &hang_cho = ds_cho[ma_mon];
+    auto it_cho = ds_cho.find(ma_mon);
+    if (it_cho == ds_cho.end())
+        return false;
+
+    auto &hang_cho = it_cho->second;
     auto it = hang_cho.vi_tri_node.find(mssv);
     if (it == hang_cho.vi_tri_node.end())
-        return false; // Khong co trong hang cho
+        return false;
 
-    // Xoa node truc tiep khoi list bang iterator trong O(1)
+    // Xoa node khoi MyList va Hash Map trong O(1)
     hang_cho.hang_doi.erase(it->second);
-    // Xoa khoi bang bam trong O(1)
     hang_cho.vi_tri_node.erase(it);
 
     ghi_nhat_ky("RUT_HANG_CHO", mssv, ma_mon);
