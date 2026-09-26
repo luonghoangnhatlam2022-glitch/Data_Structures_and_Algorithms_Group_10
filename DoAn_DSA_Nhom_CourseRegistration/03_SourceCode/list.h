@@ -12,8 +12,9 @@ struct Node {
 
 struct list {
     Node* dummy;
+    int sz;
 
-    list() {
+    list() : sz(0) {
         dummy = new Node();
         dummy->next = dummy;
         dummy->prev = dummy;
@@ -25,7 +26,11 @@ struct list {
     }
 
     bool empty() {
-        return dummy->next == dummy;
+        return sz == 0;
+    }
+
+    int size() {
+        return sz;
     }
 
     Node* push_back(const string& val) {
@@ -34,6 +39,7 @@ struct list {
         n->next = dummy;
         dummy->prev->next = n;
         dummy->prev = n;
+        sz++;
         return n;
     }
 
@@ -42,15 +48,19 @@ struct list {
     }
 
     void pop_front() {
+        if (empty()) return;
         Node* cur = dummy->next;
         dummy->next = cur->next;
         cur->next->prev = dummy;
         delete cur;
+        sz--;
     }
 
     void erase(Node* node) {
+        if (!node || node == dummy) return;
         node->prev->next = node->next;
         node->next->prev = node->prev;
         delete node;
+        sz--;
     }
 };
