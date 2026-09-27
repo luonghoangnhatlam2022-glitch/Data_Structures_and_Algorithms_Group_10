@@ -37,7 +37,7 @@ void Ngay_Thang(vector<pair<int, int>> &a, int x)
 }
 void Ho_Ten(vector<string> &s, int n)
 {
-    ifstream file("ten.csv");
+    ifstream file("../02_Data/ten.csv");
     string line;
     vector<string> Ho, Lnam, Lnu;
     vector<pair<string, int>> Ten;
@@ -156,7 +156,7 @@ int main()
     Ho_Ten(name, n);
     Ngay_Thang(sinh, n);
 
-    string filename = "Sinh_Vien.csv";
+    string filename = "../02_Data/Sinh_Vien.csv";
 
     ofstream file(filename);
 

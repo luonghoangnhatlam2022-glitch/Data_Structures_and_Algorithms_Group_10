@@ -75,11 +75,13 @@ void sinh_data(ll n)
     string hp;
     int sv;
 
+    ll tong_so_dang_ky = 0;
+
     while (dem < n)
     {
-        int lenhso = random(10);
+        int lenhso = random(100);
 
-        if (lenhso < 4) // ADD
+        if (lenhso < 60)
         {
             hp = danh_sach_hoc_phan[random(so_luong_hoc_phan)];
             sv = 25001 + random(so_luong_sinh_vien);
@@ -87,29 +89,54 @@ void sinh_data(ll n)
             if (danh_sach_sinh_vien[sv][hp] == false)
             {
                 danh_sach_sinh_vien[sv][hp] = true;
+                tong_so_dang_ky++;
                 tep_tin << "ADD," << hp << "," << sv << "\n";
                 dem++;
             }
         }
-        else if (lenhso < 8) // EMOVE
+        else if (lenhso < 80)
         {
-            hp = danh_sach_hoc_phan[random(so_luong_hoc_phan)];
-            sv = 25001 + random(so_luong_sinh_vien);
+            if (tong_so_dang_ky == 0)
+                continue;
 
-            if (danh_sach_sinh_vien[sv][hp] == true)
+            int sv_remove;
+            vector<string> cac_mon_da_dang_ky;
+
+            while (true)
             {
-                danh_sach_sinh_vien[sv][hp] = false;
-                tep_tin << "REMOVE," << hp << "," << sv << "\n";
-                dem++;
+                sv_remove = 25001 + random(so_luong_sinh_vien);
+
+                if (danh_sach_sinh_vien.find(sv_remove) != danh_sach_sinh_vien.end())
+                {
+                    for (pair<string, bool> pair : danh_sach_sinh_vien[sv_remove])
+                    {
+                        if (pair.second == true)
+                        {
+                            cac_mon_da_dang_ky.push_back(pair.first);
+                        }
+                    }
+
+                    if (!cac_mon_da_dang_ky.empty())
+                    {
+                        break;
+                    }
+                }
             }
+
+            hp = cac_mon_da_dang_ky[random(cac_mon_da_dang_ky.size())];
+
+            danh_sach_sinh_vien[sv_remove][hp] = false;
+            tong_so_dang_ky--;
+            tep_tin << "REMOVE," << hp << "," << sv_remove << "\n";
+            dem++;
         }
-        else if (lenhso == 8) // GETSV
+        else if (lenhso < 90)
         {
             sv = 25001 + random(so_luong_sinh_vien);
             tep_tin << "GETSV," << sv << "\n";
             dem++;
         }
-        else // GETHP
+        else
         {
             hp = danh_sach_hoc_phan[random(so_luong_hoc_phan)];
             tep_tin << "GETHP," << hp << "\n";
